@@ -2,8 +2,10 @@ package ui;
 import model.*;
 import java.util.*;
 
+import customExceptions.*;
+
 public class MainControl {
-	private static Scanner user = new Scanner(System.in);
+	private static Scanner user;
 	private Machine m1;
 	
 	public MainControl() {
@@ -12,8 +14,8 @@ public class MainControl {
 	
 	
 	public static void main(String[] args) {
-	user = new Scanner(System.in);
 	MainControl mc1 = new MainControl();
+	user = new Scanner(System.in);
 	int userChoice = 0;
 	while(userChoice != 6) {
 		switch (userChoice) {
@@ -28,22 +30,22 @@ public class MainControl {
 			break;
 			
 		case 2:
-			mc1.searchUser();
+			System.out.println(mc1.searchUser());
 			userChoice = 0;
 			break;	
 			
 		case 3:
-			mc1.assignTurn();
+			System.out.println(mc1.assignTurn());
 			userChoice = 0;
 			break;	
 			
 		case 4:
-			mc1.upcomingTurn();
+			System.out.println(mc1.currentTurn());
 			userChoice = 0;
 			break;
 			
 		case 5:
-			mc1.attend();
+			System.out.println(mc1.attend());
 			userChoice = 0;
 			break;
 		}
@@ -56,7 +58,7 @@ public class MainControl {
 	
 	public void addUser(){
 		System.out.println("Select document type: \n C. Identification Card \n I. Identity card \n R. Civil registry \n P. Passport \n E. Foreigner ID");
-	
+		user = new Scanner(System.in);
 		String typeS = user.nextLine();
 		typeS.toLowerCase();
 		char type = typeS.charAt(0);
@@ -73,18 +75,39 @@ public class MainControl {
 	}
 	
 	public String searchUser() {
-		System.out.println("Input the user document number to search");
+		user = new Scanner(System.in);
+		String a = "";
+		try{System.out.println("Input the user document number to search");
 		String document = user.nextLine();
-		String a = m1.searchUser(document);
+		a = m1.searchUser(document);
 		return a;
+		} 
 		
+		catch(UserNotFoundException e) {a = e.getMessage(); return a;}
 	}
 	
 	public String assignTurn() {
+	user = new Scanner(System.in);
 	String a = "";
-	m1.assignTurn();
+	System.out.println("Enter the user's document number");
+	String document = user.nextLine();
+	m1.assignTurn(document);
 	return a;
 	}
-
+	
+	public String currentTurn() {
+		return m1.currentTurn();
+	}
+	
+	public String attend() {
+		user = new Scanner(System.in);
+		System.out.println("Enter the user's document to attend");
+		String document = user.nextLine();
+		System.out.println("T. The user was correctly attended \n  L. The user was not present while attending");
+		String status = user.nextLine();
+		status.toLowerCase();
+		char statusC = status.charAt(0);
+		return m1.attend(document, statusC);
+	}
 }
 

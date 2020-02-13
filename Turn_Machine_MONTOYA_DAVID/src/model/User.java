@@ -30,8 +30,19 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [type=" + type + ", document=" + document + ", name=" + name + ", lastName=" + lastName
-				+ ", phone=" + phone + ", address=" + address + ", turn=" + turn + "]";
+		
+		String a = "type=" + type + ", document=" + document + ", name=" + name + ", lastName=" + lastName
+				+ ", phone=" + phone;
+		if(turn != null) {
+			a+= ", address=" + address;
+		}
+		
+		
+		if(turn != null) {
+			a+= ", Turn " + turn.getName();
+		}
+		
+		return a;
 	}
 
 	public void setTurn(Turn turn) {

@@ -1,52 +1,103 @@
 package model;
 import java.util.*;
+import customExceptions.*;
 
 public class Machine {
 	
 	private String currentTurn;
+	private String nextTurn;
 	private ArrayList<User> users;
 	private String turnLett;
-	private String leftNum;
-	private String rightNum;
+	private int leftNum;
+	private int rightNum;
+	private int currLett;
 	
 	public Machine() {
 		users = new ArrayList<User>();
+		currLett = 0;
 		String[] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-		turnLett = letters[0];
-		leftNum = "0";
-		rightNum = "0";
+		turnLett = letters[currLett];
+		leftNum = 0;
+		rightNum = 0;
 		currentTurn = turnLett + leftNum + rightNum;
+		nextTurn = turnLett + leftNum + ++rightNum; 
 	}
 	
-	public void addUser(char type, String document, String name, String lastName, String phone) {
+	public void addUser(char type, String document, String name, String lastName, String phone) throws UserAlreadyExistsException {
+		for(int i = 0; i < users.size(); i++){
+			if((users.get(i).getDocument()).equalsIgnoreCase(document)) {
+				throw new UserAlreadyExistsException(users.get(i).getName());
+			}
+		}
+		
 		users.add(new User(type, document, name, lastName, phone));
 	}
 	
 	public String searchUser(String document) throws UserNotFoundException {
 		String a = "";
 		for(int i = 0; i < users.size(); i++){
-			if(users.get(i).equals(document)) {
+			if((users.get(i).getDocument()).equalsIgnoreCase(document)) {
 				a = users.get(i).toString();
 			}
 		}
 		
-		if(a.equals("")){throw UserNotFoundException;}
+		if(a.equals("")){throw new UserNotFoundException();}
+		return a;
 	}
 	
 	public String assignTurn(String document) throws UserNotFoundException, UserAlreadyWithTurnException {
 		searchUser(document);
 		Turn a = new Turn(currentTurn, 'a');
-		int rNum = Integer.parseInt(rightNum);
-		int lNum = Integer.parseInt(leftNum);
 		for(int i = 0; i < users.size(); i++) {
-			if(users.get(i).getDocument().equals(document) && users.get(i).getTurn() == null){
+			if(users.get(i).getDocument().equalsIgnoreCase(document) && users.get(i).getTurn() == null){
 				users.get(i).setTurn(a);
+				advanceTurn();
+				break;
 			}
 			
-			else {throw UserAlreadyWithTurnException;}
+			else if(users.get(i).getName().equalsIgnoreCase(document) && users.get(i).getTurn() != null){
+				throw new UserAlreadyWithTurnException();}
 		}
 		
+		return "Turn " + a.getName() + " has been assigned";
 	}
 	
 	
+	
+	
+	public void advanceTurn() {
+		leftNum++;
+		if(leftNum >= 9) {
+			leftNum = 0;
+			rightNum++;
+		}
+		
+		else if(rightNum > 9) {
+			currLett++;
+		}
+	}
+	
+	
+	
+	
+	public String currentTurn() {
+		String currNext = currentTurn + " " + nextTurn;
+		return currNext;
+		
+	}
+
+
+	public String attend(String document, char status) throws UserWithoutTurnException {
+		String a = "";
+		for(int i = 0; i < users.size(); i++){
+			if((users.get(i).getDocument()).equalsIgnoreCase(document) && users.get(i).getTurn() != null) {
+				(users.get(i).getTurn()).setStatus(status);
+				a = "User with " + users.get(i).getDocument() + " document has been attended succesfully";
+				break;
+			}
+			
+			else if(users.get(i).getTurn() == null) {throw new UserWithoutTurnException();}
+	}
+	return a;	
+}
 }
