@@ -80,4 +80,11 @@ public class MainControl {
 		
 	}
 	
+	public String assignTurn() {
+	String a = "";
+	m1.assignTurn();
+	return a;
+	}
+
 }
+
