@@ -5,7 +5,6 @@ import customExceptions.*;
 public class Machine {
 
 	private String currentTurn;
-	private String nextTurn;
 	private ArrayList<User> users;
 	private String turnLett;
 	private int leftNum;
@@ -21,8 +20,7 @@ public class Machine {
 		leftNum = 0;
 		rightNum = 0;
 		currentTurn = turnLett + leftNum + rightNum;
-		nextTurn = turnLett + leftNum + ++rightNum; 
-	}
+		}
 	
 	public void addUser(char type, String document, String name, String lastName, String phone) throws UserAlreadyExistsException {
 		for(int i = 0; i < users.size(); i++){
@@ -33,7 +31,7 @@ public class Machine {
 		
 		users.add(new User(type, document, name, lastName, phone));
 	}
-	
+
 	public String searchUser(String document) throws UserNotFoundException {
 		String a = "";
 		for(int i = 0; i < users.size(); i++){
@@ -52,12 +50,11 @@ public class Machine {
 		for(int i = 0; i < users.size(); i++) {
 			if(users.get(i).getDocument().equalsIgnoreCase(document) && users.get(i).getTurn() == null){
 				users.get(i).setTurn(a);
-				advanceTurn();
 				break;
 			}
 			
 			else if(users.get(i).getName().equalsIgnoreCase(document) && users.get(i).getTurn() != null){
-				throw new UserAlreadyWithTurnException();}
+				throw new UserAlreadyWithTurnException(users.get(i).getTurn());}
 		}
 		
 		return "Turn " + a.getName() + " has been assigned";
@@ -74,8 +71,9 @@ public class Machine {
 		String a = "";
 		for(int i = 0; i < users.size(); i++){
 			if((users.get(i).getDocument()).equalsIgnoreCase(document) && users.get(i).getTurn() != null) {
-				(users.get(i).getTurn()).setValid(false);
+				users.get(i).setTurn(null);
 				a = "User with " + users.get(i).getDocument() + " document has been attended succesfully";
+				advanceTurn();
 				break;
 			}
 			
@@ -93,23 +91,35 @@ public class Machine {
 	
 	public void advanceTurn() {
 		rightNum++;
-		if(rightNum >= 9) {
+		
+		if(rightNum > 9) {
 			rightNum = 0;
 			 leftNum++;
 		}
 		
-		if(leftNum >= 9) {
+		if(leftNum > 9) {
 			leftNum = 0;
-			rightNum = 0;
 			currLett++;
 		}
 		
+		if(currLett > letters.length-1) {
+			currLett = 0;
+		}
+
 		setCurrentTurn(leftNum, rightNum, currLett);
 	}
 	
 	
 	public void setCurrentTurn(int leftNum, int rightNum, int currLett) {
 		currentTurn = letters[currLett] + leftNum + rightNum;
+	}
+	
+	public ArrayList<User> getUsers() {
+		return users;
+	}
+	
+	public String getCurrentTurn() {
+		return currentTurn;
 	}
 
 }

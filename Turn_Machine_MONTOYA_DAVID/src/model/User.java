@@ -27,6 +27,10 @@ public class User {
 	public Turn getTurn() {
 		return turn;
 	}
+	
+	public String getTurnName() {
+		return turn.getName();
+	}
 
 	@Override
 	public String toString() {

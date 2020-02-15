@@ -30,7 +30,7 @@ public class MainControl {
 				mc1.addUser();
 			} catch (UserAlreadyExistsException e) {
 				e.getMessage();
-			}
+			}catch(InputMismatchException e) {System.out.println("Invalid input");}
 			finally{userChoice = 0;}
 			break;
 			
@@ -74,22 +74,27 @@ public class MainControl {
 	
 	
 	
-	public void addUser() throws UserAlreadyExistsException{
+	public void addUser() throws UserAlreadyExistsException, InputMismatchException{
 		System.out.println("Select document type: \n C. Identification Card \n I. Identity card \n R. Civil registry \n P. Passport \n E. Foreigner ID");
 		user = new Scanner(System.in);
 		String typeS = user.nextLine();
 		typeS.toLowerCase();
+		if(typeS.equals("")) {throw new InputMismatchException();}
 		char type = typeS.charAt(0);
 		System.out.println("Input document number");
-		String document = user.nextLine();
-		System.out.println("Input name and then last name");
+		int documentNum = user.nextInt();
+		user.nextLine();
+		String document = Integer.toString(documentNum);
+		System.out.println("Input name");
 		String name = user.nextLine();
+		if(name.equals("")) {throw new InputMismatchException();}
+		System.out.println("Input last name");
 		String lastName = user.nextLine();
+		if(name.equals("")) {throw new InputMismatchException();}
 		System.out.println("Input phone number");
 		String phone = user.nextLine();	
 		m1.addUser(type, document, name, lastName, phone);
 		System.out.println("User added");
-
 	}
 	
 	public String searchUser() {
