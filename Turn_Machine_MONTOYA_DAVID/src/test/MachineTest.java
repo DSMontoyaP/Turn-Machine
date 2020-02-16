@@ -51,7 +51,7 @@ class MachineTest {
 	}
 	
 	@Test
-	void searchTest() {
+	void testSearch() {
 		assertTrue(users.isEmpty(), "ArrayList is not empty");
 		try {
 			m1.addUser('c', "123456", "Albert", "Wesker", "");
@@ -81,7 +81,7 @@ class MachineTest {
 	}
 	
 	@Test
-	void assignTest() {
+	void testAssign() {
 		setup1();
 		
 		try {
@@ -99,7 +99,7 @@ class MachineTest {
 	}
 	
 	@Test
-	void advanceTurnTest() {
+	void testAdvanceTurn() {
 		assertTrue(m1.getCurrentTurn().equalsIgnoreCase("A00"));
 		for(int i = 0; i<3000; i++) {
 			if(i == 1) {
@@ -122,7 +122,7 @@ class MachineTest {
 	}
 	
 	@Test
-	void attendTest() {
+	void testAttend() {
 		setup1();
 		try {
 			m1.assignTurn("123450");
