@@ -9,11 +9,31 @@ public class Turn {
 	private String name;
 	private char status;
 	private boolean valid;
+	private float duration;
+	private TurnType type;
 	
-	public Turn(String name, char status) {
+	public Turn(String name, char status, TurnType type) {
 		this.name = name;
 		this.status = status;
+		this.duration = type.getDuration();
+		this.type = type;
 		valid = true;
+	}
+
+	public float getDuration() {
+		return duration;
+	}
+
+	public void setDuration(float duration) {
+		this.duration = duration;
+	}
+
+	public TurnType getType() {
+		return type;
+	}
+
+	public void setType(TurnType type) {
+		this.type = type;
 	}
 
 	public boolean isValid() {

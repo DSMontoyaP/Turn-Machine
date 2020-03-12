@@ -1,6 +1,7 @@
 package ui;
 import model.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import customExceptions.*;
 
@@ -26,45 +27,63 @@ public class MainControl {
 			break;
 			
 		case 1:
+			long start = System.currentTimeMillis();
 			try {
 				mc1.addUser();
 			} catch (UserAlreadyExistsException e) {
 				e.getMessage();
 			}catch(InputMismatchException e) {System.out.println("Invalid input");}
 			finally{userChoice = 0;}
+			long finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			System.out.println(finish);
 			break;
 			
 		case 2:
+			start = System.currentTimeMillis();
 			System.out.println(mc1.searchUser());
 			userChoice = 0;
+			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			System.out.println(finish);
 			break;	
 			
 		case 3:
+			start = System.currentTimeMillis();
 			try {
 				System.out.println(mc1.assignTurn());
-			} catch (UserNotFoundException | UserAlreadyWithTurnException e) {
+			} catch (UserNotFoundException | UserAlreadyWithTurnException | TurnTypeNotFoundException e) {
 				System.out.println(e.getMessage());
 			}
-			finally{userChoice = 0;}
+			finally{userChoice = 0;
+			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			System.out.println(finish);}
 			break;	
 			
 		case 4:
+			start = System.currentTimeMillis();
 			System.out.println(mc1.currentTurn());
 			userChoice = 0;
+			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			System.out.println(finish);
 			break;
 			
 		case 5:
+			start = System.currentTimeMillis();
 			try {
 				System.out.println(mc1.attend());
 			} catch (UserWithoutTurnException e) {
 				System.out.println(e.getMessage());
 			}
-			finally{userChoice = 0;}
+			finally{userChoice = 0;
+			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);;
+			System.out.println(finish);}
 			break;
 			
 		case 6:
+			start = System.currentTimeMillis();
 			mc1.resetTurns();
 			userChoice = 0;
+			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);;
+			System.out.println(finish);
 			break;
 		}
 	}
@@ -109,12 +128,14 @@ public class MainControl {
 		catch(UserNotFoundException e) {a = e.getMessage(); return a;}
 	}
 	
-	public String assignTurn() throws UserNotFoundException, UserAlreadyWithTurnException {
+	public String assignTurn() throws UserNotFoundException, UserAlreadyWithTurnException, TurnTypeNotFoundException {
 	user = new Scanner(System.in);
 	String a = "";
 	System.out.println("Enter the user's document number");
 	String document = user.nextLine();
-	a = m1.assignTurn(document);
+	System.out.println("Enter turn type");
+	TurnType b = m1.searchTurnType(user.nextLine());
+	a = m1.assignTurn(document, b);
 	return a;
 	}
 	

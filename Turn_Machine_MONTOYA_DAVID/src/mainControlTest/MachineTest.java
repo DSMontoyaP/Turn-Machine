@@ -13,6 +13,7 @@ class MachineTest {
 	
 	private ArrayList<User> users= new ArrayList<User>();
 	private Machine m1 = new Machine();
+	private TurnType y = new TurnType("Default", 20);;
 	
 	void setup1() {
 		for(int i = 0; i<100; i++) {
@@ -51,7 +52,7 @@ class MachineTest {
 	}
 	
 	@Test
-	void searchTest() {
+	void testSearch() {
 		assertTrue(users.isEmpty(), "ArrayList is not empty");
 		try {
 			m1.addUser('c', "123456", "Albert", "Wesker", "");
@@ -81,25 +82,25 @@ class MachineTest {
 	}
 	
 	@Test
-	void assignTest() {
+	void testAssign() {
 		setup1();
 		
 		try {
-			m1.assignTurn("123450");
-		} catch (UserNotFoundException | UserAlreadyWithTurnException e) {
+			m1.assignTurn("123450", y);
+		} catch (UserNotFoundException | UserAlreadyWithTurnException | TurnTypeNotFoundException e) {
 			fail(e.getMessage());
 		}
 		
 		try {
-			m1.assignTurn("12345");
+			m1.assignTurn("12345", y);
 			fail("Should've thrown an exception");
-			} catch(UserNotFoundException | UserAlreadyWithTurnException e) {
+			} catch(UserNotFoundException | UserAlreadyWithTurnException | TurnTypeNotFoundException e) {
 				assertTrue(users.get(0).getTurnName().equals("A00"), "Wrong turn number " + users.get(0).getTurn());
 			}
 	}
 	
 	@Test
-	void advanceTurnTest() {
+	void testAdvanceTurn() {
 		assertTrue(m1.getCurrentTurn().equalsIgnoreCase("A00"));
 		for(int i = 0; i<3000; i++) {
 			if(i == 1) {
@@ -122,16 +123,17 @@ class MachineTest {
 	}
 	
 	@Test
-	void attendTest() {
+	void testAttend() {
 		setup1();
 		try {
-			m1.assignTurn("123450");
+			m1.assignTurn("123450", y);
 			m1.attend("123450", 'T');
 			assertTrue(users.get(0).getTurn() == null);
 			
-		} catch (UserNotFoundException | UserAlreadyWithTurnException | UserWithoutTurnException e) {
+		} catch (UserNotFoundException | UserAlreadyWithTurnException | UserWithoutTurnException | TurnTypeNotFoundException e) {
 			fail();
 		}
 	}
 
 }
+
