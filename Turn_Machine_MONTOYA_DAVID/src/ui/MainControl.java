@@ -2,6 +2,7 @@ package ui;
 import model.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
 
 import customExceptions.*;
 
@@ -18,10 +19,12 @@ public class MainControl {
 	MainControl mc1 = new MainControl();
 	user = new Scanner(System.in);
 	int userChoice = 0;
-	System.out.println("Welcome");
+	System.out.println("Welcome \n ");
 	while(userChoice != 7) {
 		switch (userChoice) {
 		case 0:
+			Calendar x = Calendar.getInstance();
+			System.out.println(x.get(Calendar.YEAR) + "/" + x.get(Calendar.MONTH) + "/" + x.get(Calendar.DATE)+ "/  " + x.get(Calendar.HOUR)+ ":" + x.get(Calendar.MINUTE)+ ":" + x.get(Calendar.SECOND));
 			System.out.println("\n 1. Add a new user \n 2. Search user \n 3. Assign user a turn \n 4. Upcoming turn to attend \n 5. Attend current turn \n 6. Reset turns \n 7. Close");
 			userChoice = user.nextInt();
 			break;
@@ -34,7 +37,7 @@ public class MainControl {
 				e.getMessage();
 			}catch(InputMismatchException e) {System.out.println("Invalid input");}
 			finally{userChoice = 0;}
-			long finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			long finish = System.currentTimeMillis() - start;
 			System.out.println(finish);
 			break;
 			
@@ -42,7 +45,7 @@ public class MainControl {
 			start = System.currentTimeMillis();
 			System.out.println(mc1.searchUser());
 			userChoice = 0;
-			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			finish = System.currentTimeMillis() - start;
 			System.out.println(finish);
 			break;	
 			
@@ -54,7 +57,7 @@ public class MainControl {
 				System.out.println(e.getMessage());
 			}
 			finally{userChoice = 0;
-			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			finish = System.currentTimeMillis() - start;
 			System.out.println(finish);}
 			break;	
 			
@@ -62,11 +65,11 @@ public class MainControl {
 			start = System.currentTimeMillis();
 			System.out.println(mc1.currentTurn());
 			userChoice = 0;
-			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);
+			finish = System.currentTimeMillis() - start;
 			System.out.println(finish);
 			break;
 			
-		case 5:
+		/**case 5:
 			start = System.currentTimeMillis();
 			try {
 				System.out.println(mc1.attend());
@@ -74,15 +77,15 @@ public class MainControl {
 				System.out.println(e.getMessage());
 			}
 			finally{userChoice = 0;
-			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);;
+			finish = System.currentTimeMillis() - start;
 			System.out.println(finish);}
-			break;
+			break; */
 			
 		case 6:
 			start = System.currentTimeMillis();
 			mc1.resetTurns();
 			userChoice = 0;
-			finish = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - start);;
+			finish = System.currentTimeMillis() - start;
 			System.out.println(finish);
 			break;
 		}
@@ -143,19 +146,19 @@ public class MainControl {
 		return m1.currentTurn();
 	}
 	
-	public String attend() throws UserWithoutTurnException {
+/**	public String attend() throws UserWithoutTurnException {
 		user = new Scanner(System.in);
 		System.out.println("Enter the user's document to attend");
 		String document = user.nextLine();
-		System.out.println("T. The user was correctly attended \n L. The user was not present while attending");
+		System.out.println("T. The user was correctly attended \nL. The user was not present while attending");
 		String status = user.nextLine();
 		status.toLowerCase();
 		char statusC = status.charAt(0);
 		return m1.attend(document, statusC);
-	}
+	}**/
 	
 	public void resetTurns() {
 		m1.resetTurns();
-	}
+	} 
 }
 
