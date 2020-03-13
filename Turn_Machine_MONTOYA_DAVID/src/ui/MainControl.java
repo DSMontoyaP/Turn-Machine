@@ -1,8 +1,7 @@
 package ui;
 import model.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.Calendar;
+
 
 import customExceptions.*;
 
@@ -20,12 +19,11 @@ public class MainControl {
 	user = new Scanner(System.in);
 	int userChoice = 0;
 	System.out.println("Welcome \n ");
-	while(userChoice != 7) {
+	while(userChoice != 9) {
 		switch (userChoice) {
 		case 0:
-			Calendar x = Calendar.getInstance();
-			System.out.println(x.get(Calendar.YEAR) + "/" + x.get(Calendar.MONTH) + "/" + x.get(Calendar.DATE)+ "/  " + x.get(Calendar.HOUR)+ ":" + x.get(Calendar.MINUTE)+ ":" + x.get(Calendar.SECOND));
-			System.out.println("\n 1. Add a new user \n 2. Search user \n 3. Assign user a turn \n 4. Upcoming turn to attend \n 5. Attend current turn \n 6. Reset turns \n 7. Close");
+			System.out.println(mc1.getSystemTime());
+			System.out.println("\n 1. Add a new user \n 2. Search user \n 3. Assign user a turn \n 4. Upcoming turn to attend \n 5. Attend current turn \n 6. Reset turns \n 7. System time \n 8. Set system time \n 9. Close");
 			userChoice = user.nextInt();
 			break;
 			
@@ -69,17 +67,13 @@ public class MainControl {
 			System.out.println(finish);
 			break;
 			
-		/**case 5:
+		case 5:
 			start = System.currentTimeMillis();
-			try {
-				System.out.println(mc1.attend());
-			} catch (UserWithoutTurnException e) {
-				System.out.println(e.getMessage());
-			}
-			finally{userChoice = 0;
+			System.out.println(mc1.attend());
+			userChoice = 0;
 			finish = System.currentTimeMillis() - start;
-			System.out.println(finish);}
-			break; */
+			System.out.println(finish);
+			break;
 			
 		case 6:
 			start = System.currentTimeMillis();
@@ -88,6 +82,19 @@ public class MainControl {
 			finish = System.currentTimeMillis() - start;
 			System.out.println(finish);
 			break;
+			
+		case 7:
+			userChoice = 0;
+			break;
+			
+		case 8:
+			try {
+				System.out.println(mc1.setSystemTime());
+			} catch (InvalidInputForDateException e) {
+				System.out.println(e.getMessage());
+			}
+			userChoice = 0;
+			break;
 		}
 	}
 	
@@ -95,6 +102,31 @@ public class MainControl {
 	} 
 	
 	
+	private String setSystemTime() throws InvalidInputForDateException {
+	
+		String a= "";
+		boolean choice = user.nextBoolean();
+		if(choice == false) {
+		System.out.println("Please enter the year");
+		int year = user.nextInt();
+		int month = user.nextInt();
+		int day = user.nextInt();
+		int hour = user.nextInt();
+		int minute = user.nextInt();
+		a = m1.setSystemTime(year, month, day, hour, minute);}
+		
+		else {
+			a = m1.setSystemTime(choice);
+		}
+		
+		
+		return a;
+	}
+
+
+	public String  getSystemTime() {
+		return m1.getSystemTime();
+	}
 	
 	public void addUser() throws UserAlreadyExistsException, InputMismatchException{
 		System.out.println("Select document type: \n C. Identification Card \n I. Identity card \n R. Civil registry \n P. Passport \n E. Foreigner ID");
@@ -146,16 +178,9 @@ public class MainControl {
 		return m1.currentTurn();
 	}
 	
-/**	public String attend() throws UserWithoutTurnException {
-		user = new Scanner(System.in);
-		System.out.println("Enter the user's document to attend");
-		String document = user.nextLine();
-		System.out.println("T. The user was correctly attended \nL. The user was not present while attending");
-		String status = user.nextLine();
-		status.toLowerCase();
-		char statusC = status.charAt(0);
-		return m1.attend(document, statusC);
-	}**/
+	public String attend(){
+		return m1.attend();
+	}
 	
 	public void resetTurns() {
 		m1.resetTurns();

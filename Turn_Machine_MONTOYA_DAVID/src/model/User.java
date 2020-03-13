@@ -15,6 +15,7 @@ public class User {
 	private String phone;
 	private String address;
 	private Turn turn;
+	private boolean suspended;
 	
 	public User(char type, String document, String name, String lastName, String phone) {
 		this.type = type;
@@ -22,6 +23,7 @@ public class User {
 		this.name = name;
 		this.lastName = lastName;
 		this.phone = phone;
+		this.setSuspended(false);
 	}
 
 	public Turn getTurn() {
@@ -99,6 +101,14 @@ public class User {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public boolean isSuspended() {
+		return suspended;
+	}
+
+	public void setSuspended(boolean suspended) {
+		this.suspended = suspended;
 	}
 
 }

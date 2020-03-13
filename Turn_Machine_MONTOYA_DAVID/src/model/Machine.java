@@ -1,6 +1,7 @@
 package model;
 import java.util.*;
 import customExceptions.*;
+import ui.MainControl;
 
 public class Machine {
 
@@ -12,6 +13,10 @@ public class Machine {
 	private int currLett;
 	private String[] letters;
 	private ArrayList<TurnType> turnTypes;
+	private Date systemDate;
+	private Time systemTime;
+	private boolean hourChanged;
+	private Calendar time;
 
 	public Machine() {
 		users = new ArrayList<User>();
@@ -22,7 +27,12 @@ public class Machine {
 		rightNum = 0;
 		currentTurn = turnLett + leftNum + rightNum;
 		turnTypes = new ArrayList<TurnType>();
+		Calendar time = Calendar.getInstance();
+		systemDate = new Date(time.get(Calendar.YEAR), time.get(Calendar.MONTH), time.get(Calendar.DATE));
+		systemTime = new Time(time.get(Calendar.HOUR), time.get(Calendar.MINUTE), time.get(Calendar.SECOND));
+		hourChanged = false;
 	}
+
 
 	/**
 	 *<b>Name:</b> addUser.<br>
@@ -113,8 +123,18 @@ public class Machine {
 		return a;
 	}
 	
+	/**
+	 *<b>Name:</b> createTurnType.<br>
+	 *This method creates a new turn type.<br>
+	 *@param name the name of the turn type.<br>
+	 *@param duration the duration of the turn
+	 *@throws TurnTypeAlreadyExistsException
+	 */
 	
-	public void createTurnType(String name, float duration) {
+	public void createTurnType(String name, float duration) throws TurnTypeAlreadyExistsException{
+		if(searchTurnType(name) != null) {
+			throw new TurnTypeAlreadyExistsException();
+		}
 		turnTypes.add(new TurnType(name, duration));
 	}
 
@@ -123,22 +143,14 @@ public class Machine {
 	 *This method attends a turn of an already existing user.<br>
 	 *@param document the document number.<br>
 	 *@param status the status the attendant gave to the turn
-	 *@throws UserWithoutTurnException if the user does not have a turn
 	 *@return a message showing the document of the user that was attended<br>
 	 */
-	public String attend(String document, char status) throws UserWithoutTurnException {
+	public String attend(){
 		String a = "";
-		for(int i = 0; i < users.size(); i++){
-			if((users.get(i).getDocument()).equalsIgnoreCase(document) && users.get(i).getTurn() != null) {
-				users.get(i).setTurn(null);
-				a = "User with " + users.get(i).getDocument() + " document has been attended succesfully";
-				advanceTurn();
-				break;
-			}
-
-			else if(users.get(i).getTurn() == null) {throw new UserWithoutTurnException();}
-		}
+				
+		
 		return a;
+		
 	}
 
 
@@ -203,4 +215,53 @@ public class Machine {
 
 	}
 
+	public String getSystemTime() {
+		String a = "";
+
+		if(hourChanged == false) {
+			time = Calendar.getInstance();
+			a = time.get(Calendar.YEAR) + "/" + time.get(Calendar.MONTH) + "/" + time.get(Calendar.DATE) + "   " + time.get(Calendar.HOUR) + ":" + time.get(Calendar.MINUTE) + ":" + time.get(Calendar.SECOND);
+		}
+		else {
+			time = Calendar.getInstance();
+			time.add(Calendar.YEAR, systemDate.getYear());
+			time.add(Calendar.MONTH, systemDate.getMonth());
+			time.add(Calendar.DATE, systemDate.getDay());
+			time.add(Calendar.HOUR, systemTime.getHour());
+			time.add(Calendar.MINUTE, systemTime.getMinute());
+			
+			a = Integer.toString((time.get(time.YEAR))) + "/";
+			a += Integer.toString((time.get(time.MONTH))) + "/";
+			a += Integer.toString((time.get(time.DATE))) + "  ";
+			a += Integer.toString((time.get(time.HOUR))) + ":";
+			a += Integer.toString((time.get(time.MINUTE))) + ":";
+			a += time.get(Calendar.SECOND);
+		}
+		return a;
+	}
+
+	public String setSystemTime(int year, int month, int day, int hour, int minute) throws InvalidInputForDateException {
+		if(year < time.get(Calendar.YEAR) || month< time.get(Calendar.MONTH) || day<time.get(Calendar.DATE) || hour<time.get(Calendar.HOUR) || minute<time.get(Calendar.MINUTE)) {
+			throw new InvalidInputForDateException();
+		}
+		String a = "";
+		systemDate.setYear(year);
+		systemDate.setMonth(month);
+		systemDate.setDay(day);
+		systemTime.setHour(hour);
+		systemTime.setMinute(minute);
+		hourChanged = true;
+		a = getSystemTime();
+		return a;
+	}
+	
+	public String setSystemTime(boolean currentDate) {
+		
+		Calendar b = Calendar.getInstance();
+		systemDate = new Date(b.get(Calendar.YEAR), b.get(Calendar.MONTH), b.get(Calendar.DATE));
+		systemTime = new Time(b.get(Calendar.HOUR), b.get(Calendar.MINUTE), b.get(Calendar.SECOND));
+		hourChanged = false;
+		
+		return getSystemTime();
+	}
 }

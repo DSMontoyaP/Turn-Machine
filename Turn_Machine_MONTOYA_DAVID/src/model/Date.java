@@ -8,11 +8,17 @@ public class Date {
 	private int month;
 	private int day;
 	
-	public Date() {
-		Calendar x = Calendar.getInstance();
-		this.setYear(x.get(Calendar.YEAR));
-		this.setMonth(x.get(Calendar.MONTH));
-		this.setDay(x.get(Calendar.DATE));
+	public Date(int year, int month, int day) {
+		
+		this.year = year;
+		this.month = month;
+		this.day = day;
+	}
+	
+	public String getAll() {
+		String a = "";
+		a = year + "/" + month + "/" + day;
+		return a;
 	}
 
 	public int getYear() {
@@ -20,7 +26,8 @@ public class Date {
 	}
 
 	public void setYear(int year) {
-		this.year = year;
+		Calendar x = Calendar.getInstance(); 
+		this.year = year - x.get(Calendar.YEAR);
 	}
 
 	public int getMonth() {
@@ -28,7 +35,8 @@ public class Date {
 	}
 
 	public void setMonth(int month) {
-		this.month = month;
+		Calendar x = Calendar.getInstance(); 
+		this.month = month - x.get(Calendar.MONTH);
 	}
 
 	public int getDay() {
@@ -36,7 +44,8 @@ public class Date {
 	}
 
 	public void setDay(int day) {
-		this.day = day;
+		Calendar x = Calendar.getInstance(); 
+		this.day = day - x.get(Calendar.DATE);
 	}
 
 }

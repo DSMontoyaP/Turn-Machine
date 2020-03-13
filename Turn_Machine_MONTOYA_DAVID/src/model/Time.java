@@ -7,19 +7,25 @@ public class Time {
 	private int minute;
 	private int seconds;
 	
-	public Time() {
-		Calendar x = Calendar.getInstance();
-		this.hour = x.get(Calendar.HOUR);
-		this.minute = x.get(Calendar.MINUTE);
-		this.seconds = x.get(Calendar.SECOND);
+	public Time(int hour, int minute, int seconds) {
+		this.hour = hour;
+		this.minute = minute;
+		this.seconds = seconds;
 	}
 
+	public String getAll() {
+		String a = "";
+		a = hour + ":" + minute + ":" + seconds;
+		return a;
+	}
+	
 	public int getHour() {
 		return hour;
 	}
 
 	public void setHour(int hour) {
-		this.hour = hour;
+		Calendar x = Calendar.getInstance(); 
+		this.hour = hour - x.get(Calendar.HOUR);
 	}
 
 	public int getMinute() {
@@ -27,7 +33,8 @@ public class Time {
 	}
 
 	public void setMinute(int minute) {
-		this.minute = minute;
+		Calendar x = Calendar.getInstance(); 
+		this.minute = minute - x.get(Calendar.MINUTE);
 	}
 
 	public int getSeconds() {
