@@ -128,7 +128,10 @@ public class Machine {
 				a = turnTypes.get(i);
 			}
 		}
-
+		
+		Comparator<TurnType> z = new CompareTurnTypesByDuration(); 
+		Collections.sort(turnTypes, z);
+		Collections.reverse(turnTypes);
 		return a;
 	}
 
@@ -146,6 +149,7 @@ public class Machine {
 		}
 		turnTypes.add(new TurnType(name, duration));
 		return "Turn type " + name + " has been created";
+		
 	}
 
 	
