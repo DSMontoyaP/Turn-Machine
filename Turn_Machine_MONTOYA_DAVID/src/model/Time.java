@@ -1,7 +1,9 @@
 package model;
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Time {
+@SuppressWarnings("serial")
+public class Time implements Serializable{
 	
 	private int hour;
 	private int minute;

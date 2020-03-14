@@ -1,6 +1,10 @@
 package model;
 
-public class User {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+@SuppressWarnings("serial")
+public class User implements Serializable{
 
 	public static final char CEDULAC = 'c';
 	public static final char TARJETAI = 'i';
@@ -9,6 +13,7 @@ public class User {
 	public static final char CEDULAE= 'e';
 	
 	private char type;
+	private ArrayList<Turn> attendedTurns;
 	private String document;
 	private String name;
 	private String lastName;
@@ -23,7 +28,35 @@ public class User {
 		this.name = name;
 		this.lastName = lastName;
 		this.phone = phone;
-		this.setSuspended(false);
+		this.suspended = false;
+		this.attendedTurns = new ArrayList<Turn>();
+	}
+
+	public String getAttendedTurns() {
+		String a = "";
+		for(int i = 0; i < attendedTurns.size(); i++) {
+			
+			if(attendedTurns.get(i).getStatus() != Turn.ACTIVE) {
+			a += attendedTurns.get(i).getName() + " Status: " + attendedTurns.get(i).getStatus();
+			}
+		}
+		
+		return a;
+	}
+	
+	public String getRepeatedAttendedTurns(String name) {
+		String a = "";
+		for(int i = 0; i < attendedTurns.size(); i++) {
+			if(attendedTurns.get(i).getName().equals(name)) {
+				a += getName();
+			}
+		}
+		
+		return a;
+	}
+
+	public void addAttendedTurn() {
+		attendedTurns.add(turn);
 	}
 
 	public Turn getTurn() {
@@ -107,8 +140,20 @@ public class User {
 		return suspended;
 	}
 
-	public void setSuspended(boolean suspended) {
-		this.suspended = suspended;
+	public void setSuspended() {
+		int cont = 0;
+		
+		for(int i = 0; i < attendedTurns.size(); i++) {
+			
+			if(attendedTurns.get(i).getStatus() == Turn.LOST && attendedTurns.get(i++).getStatus() == Turn.LOST) {
+				cont++;
+				break;
+				}
+			}
+		
+		if(cont>=1) {
+			suspended = true;
+		}
 	}
 
 }

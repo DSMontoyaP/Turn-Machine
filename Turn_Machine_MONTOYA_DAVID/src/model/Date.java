@@ -1,8 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Date {
+@SuppressWarnings("serial")
+public class Date implements Serializable  {
 	
 	private int year;
 	private int month;

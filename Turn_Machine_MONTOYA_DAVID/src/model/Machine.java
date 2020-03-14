@@ -1,7 +1,7 @@
 package model;
 import java.util.*;
 import customExceptions.*;
-import ui.MainControl;
+import java.io.*;
 
 public class Machine {
 
@@ -17,6 +17,7 @@ public class Machine {
 	private Time systemTime;
 	private boolean hourChanged;
 	private Calendar time;
+	
 
 	public Machine() {
 		users = new ArrayList<User>();
@@ -83,18 +84,26 @@ public class Machine {
 	 *@throws UserAlreadyWithTurnException if the user already has a turn assigned
 	 *@throws TurnTypeNotFoundException 
 	 *@return b message showing what turn was assigned<br>
+	 *@throws UserIsSuspendedException When the user has been suspended for not arriving to two dates
 
 	 */
-	public String assignTurn(String document, TurnType z) throws UserNotFoundException, UserAlreadyWithTurnException, TurnTypeNotFoundException {
+	public String assignTurn(String document, TurnType z) throws UserNotFoundException, UserAlreadyWithTurnException, TurnTypeNotFoundException, UserIsSuspendedException {
 		searchUser(document);
+		
 		if(z == null) {throw new TurnTypeNotFoundException();}
 		Turn a = new Turn(currentTurn, 'a', z);
-
+		
 		String b = "";
 		for(int i = 0; i < users.size(); i++) {
 			if(users.get(i).getDocument().equalsIgnoreCase(document) && users.get(i).getTurn() == null){
+				users.get(i).setSuspended();
+				if(users.get(i).isSuspended() != true) {
 				users.get(i).setTurn(a);
-				b = "Turn " + a.getName() + " has been assigned";
+				b = "Turn " + a.getName() + " has been assigned";}
+				
+				else if(users.get(i).isSuspended() == true) {
+					throw new UserIsSuspendedException();
+				}
 				break;
 			}
 
@@ -122,7 +131,7 @@ public class Machine {
 
 		return a;
 	}
-	
+
 	/**
 	 *<b>Name:</b> createTurnType.<br>
 	 *This method creates a new turn type.<br>
@@ -130,41 +139,93 @@ public class Machine {
 	 *@param duration the duration of the turn
 	 *@throws TurnTypeAlreadyExistsException
 	 */
-	
-	public void createTurnType(String name, float duration) throws TurnTypeAlreadyExistsException{
+
+	public String createTurnType(String name, float duration) throws TurnTypeAlreadyExistsException{
 		if(searchTurnType(name) != null) {
 			throw new TurnTypeAlreadyExistsException();
 		}
 		turnTypes.add(new TurnType(name, duration));
+		return "Turn type " + name + " has been created";
 	}
 
+	
+	
+	public void populate(int cant) throws FileNotFoundException, IOException, UserAlreadyExistsException {
+
+		char[] documentType = new char[]{'c','i','r','p','e'};		
+		Random z = new Random();
+		String document = "";
+		for(int i =0; i < cant; i++) {
+			BufferedReader readerNames = new BufferedReader(new FileReader("data/names.txt"));
+			BufferedReader readerLastNames = new BufferedReader(new FileReader("data/last names.txt"));
+			String name = "";
+			Random names = new Random();
+			int w = names.nextInt(995);
+			for(int j = 0; j < w; j++) {
+			name = readerNames.readLine();
+			}
+			
+			String lastName = "";
+			Random lastNames = new Random();
+			int l = lastNames.nextInt(995);
+			for(int b = 0; b<l; b++) {
+			lastName = readerLastNames.readLine();
+			
+			}
+			
+			char documentTypeI = documentType[z.nextInt(5)];
+			for(int j = 0; j<10; j++) {
+				document += Integer.toString(z.nextInt(9)+1);
+			}
+			addUser(documentTypeI, document, name, lastName, "");
+			document = "";
+			readerNames.close();
+			readerLastNames.close();
+		}
+
+	}
+	
+	
 	/**
 	 *<b>Name:</b> attend.<br>
-	 *This method attends a turn of an already existing user.<br>
-	 *@param document the document number.<br>
-	 *@param status the status the attendant gave to the turn
 	 *@return a message showing the document of the user that was attended<br>
 	 */
 	public String attend(){
+		
 		String a = "";
+		Calendar start = Calendar.getInstance();
+		Calendar end = Calendar.getInstance();
+		end.set(Calendar.YEAR+systemDate.getYear(), (Calendar.MONTH+systemDate.getMonth())+1, Calendar.DATE+systemDate.getDay(), Calendar.HOUR_OF_DAY+systemTime.getHour(), Calendar.MINUTE+systemTime.getMinute(), Calendar.SECOND+systemTime.getSeconds());
+		
+		for (int i = 0; i<users.size(); i++) {
+			
+			if(users.get(i).getTurn() != null) {
+				if(users.get(i).getTurn().getType().getDurationMili()+start.getTimeInMillis()<end.getTimeInMillis()) {
+					Random e = new Random();
+					int rand = e.nextInt(2)+1;
+					
+					if(rand == 1) {
+					a +=  "Turn " + users.get(i).getTurn().getName() + " was attended";
+					users.get(i).getTurn().setStatus('t');
+					users.get(i).setTurn(null);
+					}
+					
+					else if(rand == 2) {
+					a +=  "Turn " + users.get(i).getTurn().getName() + " was attended";
+					users.get(i).getTurn().setStatus('l');
+					users.get(i).setTurn(null);
+					}
+					
+					start.setTimeInMillis(users.get(i).getTurn().getType().getDurationMili()+start.getTimeInMillis()+15000);
+					
+				}
 				
-		
+			}	
+		}
+
 		return a;
-		
+
 	}
-
-
-	/**
-	 *<b>Name:</b> resetTurns.<br>
-	 *This method resets turns.<br>
-	 */
-	public void resetTurns() {
-		leftNum = 0;
-		rightNum = 0;
-		turnLett = letters[0];
-	}
-
-
 
 	/**
 	 *<b>Name:</b> advanceTurns.<br>
@@ -212,7 +273,6 @@ public class Machine {
 	public String currentTurn() {
 		String currNext = currentTurn;
 		return currNext;
-
 	}
 
 	public String getSystemTime() {
@@ -220,7 +280,7 @@ public class Machine {
 
 		if(hourChanged == false) {
 			time = Calendar.getInstance();
-			a = time.get(Calendar.YEAR) + "/" + time.get(Calendar.MONTH) + "/" + time.get(Calendar.DATE) + "   " + time.get(Calendar.HOUR) + ":" + time.get(Calendar.MINUTE) + ":" + time.get(Calendar.SECOND);
+			a = time.get(Calendar.YEAR) + "/" + time.get(Calendar.MONTH+1) + "/" + time.get(Calendar.DATE) + "   " + time.get(Calendar.HOUR_OF_DAY) + ":" + time.get(Calendar.MINUTE) + ":" + time.get(Calendar.SECOND);
 		}
 		else {
 			time = Calendar.getInstance();
@@ -229,39 +289,90 @@ public class Machine {
 			time.add(Calendar.DATE, systemDate.getDay());
 			time.add(Calendar.HOUR, systemTime.getHour());
 			time.add(Calendar.MINUTE, systemTime.getMinute());
-			
-			a = Integer.toString((time.get(time.YEAR))) + "/";
-			a += Integer.toString((time.get(time.MONTH))) + "/";
-			a += Integer.toString((time.get(time.DATE))) + "  ";
-			a += Integer.toString((time.get(time.HOUR))) + ":";
-			a += Integer.toString((time.get(time.MINUTE))) + ":";
-			a += time.get(Calendar.SECOND);
+			time.add(Calendar.SECOND, systemTime.getSeconds());
+
+			a = Integer.toString((time.get(Calendar.YEAR))) + "/";
+			a += Integer.toString((time.get(Calendar.MONTH+1))) + "/";
+			a += Integer.toString((time.get(Calendar.DATE))) + "  ";
+			a += Integer.toString((time.get(Calendar.HOUR_OF_DAY))) + ":";
+			a += Integer.toString((time.get(Calendar.MINUTE))) + ":";
+			a += Integer.toString((time.get(Calendar.SECOND)));
 		}
 		return a;
 	}
 
-	public String setSystemTime(int year, int month, int day, int hour, int minute) throws InvalidInputForDateException {
-		if(year < time.get(Calendar.YEAR) || month< time.get(Calendar.MONTH) || day<time.get(Calendar.DATE) || hour<time.get(Calendar.HOUR) || minute<time.get(Calendar.MINUTE)) {
-			throw new InvalidInputForDateException();
-		}
+	public String setSystemTime(int year, int month, int day, int hour, int minute, int seconds){
 		String a = "";
 		systemDate.setYear(year);
 		systemDate.setMonth(month);
 		systemDate.setDay(day);
 		systemTime.setHour(hour);
 		systemTime.setMinute(minute);
+		systemTime.setSeconds(seconds);
 		hourChanged = true;
 		a = getSystemTime();
+		attend();
 		return a;
 	}
-	
+
 	public String setSystemTime(boolean currentDate) {
-		
+
 		Calendar b = Calendar.getInstance();
 		systemDate = new Date(b.get(Calendar.YEAR), b.get(Calendar.MONTH), b.get(Calendar.DATE));
 		systemTime = new Time(b.get(Calendar.HOUR), b.get(Calendar.MINUTE), b.get(Calendar.SECOND));
 		hourChanged = false;
-		
+
 		return getSystemTime();
 	}
+	
+	
+	public String reportAttendedTurns(String document, boolean choice) throws FileNotFoundException {
+		String a = "";
+		for(int i = 0; i < users.size(); i++) {
+			if((users.get(i).getDocument()).equals(document)) {
+				a = users.get(i).getAttendedTurns();
+			}
+		}
+		
+		if(a != "" && choice == true) {
+			PrintWriter out = new PrintWriter("Reports.txt");
+			out.println(a);
+			out.close();
+		}
+		
+		return a;
+	}
+	
+	public String reportSameTurn(String turnNumber) {
+		String a = "";
+		
+		for(int i = 0; i < users.size(); i++) {
+			if(users.get(i).getRepeatedAttendedTurns(turnNumber).equals(turnNumber)) {
+				a += users.get(i).getName();
+			}
+		}
+		
+		if(a.equals("")) {
+			a = "No user with given turn where found";
+		}
+		return a;
+	}
+	
+	public void generateRandomTurns(int turnAmount) throws MoreTurnsThanUsersException, UserNotFoundException, UserAlreadyWithTurnException, TurnTypeNotFoundException, UserIsSuspendedException {
+		
+		if(turnAmount>users.size()) {
+			throw new MoreTurnsThanUsersException();
+		}
+		
+		Random userNumber = new Random();
+		Random turnTypeNumber = new Random();
+		
+		for(int i = 0; i < turnAmount; i++) {
+			int a = userNumber.nextInt();
+			if(users.get(a).getTurn() == null) {
+				assignTurn(users.get(a).getDocument(), turnTypes.get(turnTypeNumber.nextInt(turnTypes.size())));
+			}
+		}
+	}
+
 }
