@@ -85,7 +85,6 @@ public class Machine {
 	 *@throws TurnTypeNotFoundException 
 	 *@return b message showing what turn was assigned<br>
 	 *@throws UserIsSuspendedException When the user has been suspended for not arriving to two dates
-
 	 */
 	public String assignTurn(String document, TurnType z) throws UserNotFoundException, UserAlreadyWithTurnException, TurnTypeNotFoundException, UserIsSuspendedException {
 		searchUser(document);
@@ -120,7 +119,6 @@ public class Machine {
 	 *This method searches if the given type of a turn exists.<br>
 	 *@param type the type of the turn.<br>
 	 *@return a memory value of the instance of TurnType if found, null if not<br>
-
 	 */
 	public TurnType searchTurnType(String type) {
 		TurnType a = null;
@@ -142,6 +140,7 @@ public class Machine {
 	 *@param name the name of the turn type.<br>
 	 *@param duration the duration of the turn
 	 *@throws TurnTypeAlreadyExistsException
+	 *@return "Turn type " name " has been created"
 	 */
 
 	public String createTurnType(String name, float duration) throws TurnTypeAlreadyExistsException{
@@ -153,7 +152,14 @@ public class Machine {
 		
 	}
 
-	
+
+	/**
+	 *<b>Name:</b> createTurnType.<br>
+	 *This method creates a new turn type.<br>
+	 *@param name the name of the turn type.<br>
+	 *@param duration the duration of the turn
+	 *@throws TurnTypeAlreadyExistsException
+	 */
 	
 	public void populate(int cant) throws FileNotFoundException, IOException, UserAlreadyExistsException {
 
@@ -193,7 +199,8 @@ public class Machine {
 	
 	/**
 	 *<b>Name:</b> attend.<br>
-	 *@return a message showing the document of the user that was attended<br>
+	 *This method attends users that have asked for a turn in a given time frame, meaning, if the system's date is able to fit in the time for them to be attended it does so 
+	 *@return a message showing the name of the turn that was attended<br>
 	 */
 	public String attend(){
 		
@@ -233,6 +240,7 @@ public class Machine {
 		return a;
 		}
 
+	
 	/**
 	 *<b>Name:</b> advanceTurns.<br>
 	 *This method advances turns.<br>
@@ -259,28 +267,45 @@ public class Machine {
 
 
 
+	/**
+	 *<b>Name:</b> setCurrentTurn.<br>
+	 *This method sets the current turn with help of advance turn, its a auxiliary method.<br>
+	 *@param leftNum the left number in the turn's name
+	 *@param rightNum the right number in the turn's name
+	 *@param currLett the current letter to be assigned to the turn's name
+	 */
 
 	public void setCurrentTurn(int leftNum, int rightNum, int currLett) {
 		currentTurn = letters[currLett] + leftNum + rightNum;
 	}
 
 
-
+	/**
+	 *<b>Name:</b> getUsers.<br>
+	 *This method fetches the current users ArrayList.<br>
+	 *@return users ArrayList of users
+	 */
+	
 	public ArrayList<User> getUsers() {
 		return users;
 	}
 
 
-
+	/**
+	 *<b>Name:</b> getCurrentTurn.<br>
+	 *This method fetches the current turn in the program.<br>
+	 *@return currentTurn
+	 */
 	public String getCurrentTurn() {
 		return currentTurn;
 	}
 
-	public String currentTurn() {
-		String currNext = currentTurn;
-		return currNext;
-	}
 
+	/**
+	 *<b>Name:</b> getSystemTime.<br>
+	 *This method fetches the current time on the system, the one given by the user if he changed the hour, or the real time given by calendar.<br>
+	 *@return a system's time
+	 */
 	public String getSystemTime() {
 		String a = "";
 
@@ -307,6 +332,18 @@ public class Machine {
 		return a;
 	}
 
+
+	/**
+	 *<b>Name:</b> setSystemTime.<br>
+	 *This method sets the time on the program to one given by the user.<br>
+	 *@param year integer with the year to be set
+	 *@param month integer with the month to be set
+	 *@param day integer with the day to be set
+	 *@param hour integer with the hour to be set
+	 *@param minute integer with the minute to be set
+	 *@param seconds integer with the seconds to be set
+	 *@return a system time as given by the method "getSystemTime"
+	 */
 	public String setSystemTime(int year, int month, int day, int hour, int minute, int seconds){
 		String a = "";
 		systemDate.setYear(year);
@@ -321,6 +358,12 @@ public class Machine {
 		return a;
 	}
 
+	/**
+	 *<b>Name:</b> setSystemTime.<br>
+	 *This method sets the time on the program to the computer's.<br>
+	 *@param currentDate a boolean signaling that the user wants for the date to be the same as the computer's
+	 *@return a system's time as given by the method "getSystemTime"
+	 */
 	public String setSystemTime(boolean currentDate) {
 
 		Calendar b = Calendar.getInstance();
@@ -331,7 +374,13 @@ public class Machine {
 		return getSystemTime();
 	}
 	
-	
+	/**
+	 *<b>Name:</b> reportAttendedTurns.<br>
+	 *This method writes a report about the turns that have been attended, saving them in a file if the user chooses to.<br>
+	 *@param document the number of the document of the user
+	 *@param choice the choice value of the user when asked if they want to save the data in a file
+	 *@return a attended turns of the given user
+	 */
 	public String reportAttendedTurns(String document, boolean choice) throws FileNotFoundException {
 		String a = "";
 		for(int i = 0; i < users.size(); i++) {
@@ -349,6 +398,12 @@ public class Machine {
 		return a;
 	}
 	
+	/**
+	 *<b>Name:</b> reportSameTurn.<br>
+	 *This method reports the turns that have been repeated by several users.<br>
+	 *@param turnNumber the turn number to be searched
+	 *@return a either the name of the users that have had the same turn or a String saying that no user was found with that turn (or has been attended yet)
+	 */
 	public String reportSameTurn(String turnNumber) {
 		String a = "";
 		
@@ -359,11 +414,22 @@ public class Machine {
 		}
 		
 		if(a.equals("")) {
-			a = "No user with given turn where found";
+			a = "No user with given turn where found or they have not been attended yet";
 		}
 		return a;
 	}
 	
+	
+	/**
+	 *<b>Name:</b> generateRandomTurns.<br>
+	 *This method generates random turns to the users in the ArrayList.<br>
+	 *@param turnAmount the amount of turns to be created, cannot exceed the amount of users currently registered
+	 *@throws MoreTurnsThanUsersException
+	 *@throws UserNotFoundException
+	 *@throws UserAlreadyWithTurnException
+	 *@throws TurnTypeNotFoundException
+	 *@throws UserIsSuspendedException
+	 */
 	public void generateRandomTurns(int turnAmount) throws MoreTurnsThanUsersException, UserNotFoundException, UserAlreadyWithTurnException, TurnTypeNotFoundException, UserIsSuspendedException {
 		
 		if(turnAmount>users.size()) {
@@ -379,6 +445,15 @@ public class Machine {
 				assignTurn(users.get(a).getDocument(), turnTypes.get(turnTypeNumber.nextInt(turnTypes.size())));
 			}
 		}
+	}
+	
+	/**
+	 * *<b>Name:</b> currentTurn. <br>
+	 * This method gets the current turn
+	 * @return currentTurn
+	 */
+	public String currentTurn() {
+		return currentTurn;
 	}
 
 }

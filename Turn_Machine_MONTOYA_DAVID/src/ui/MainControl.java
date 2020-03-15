@@ -31,7 +31,7 @@ public class MainControl {
 		switch (userChoice) {
 		case 0:
 			System.out.println(mc1.getSystemTime());
-			System.out.println("\n 1. Add a new user \n 2. Search user \n 3. Assign user a turn \n 4. Upcoming turn to attend \n 5. Attend turns \n 6. System time \n 7. Set system time \n 8. Create turn type \n 10. Get turns that have been repeated \n 11. Generate random users \n 12. Generate random turns \n 13. Save data \n 14. Close");
+			System.out.println("\n 1. Add a new user \n 2. Search user \n 3. Assign user a turn \n 4. Upcoming turn to attend \n 5. Attend turns \n 6. System time \n 7. Set system time \n 8. Create turn type \n 9. Report about the attended turns \n 10. Get turns that have been repeated \n 11. Generate random users \n 12. Generate random turns \n 13. Save data \n 14. Close");
 			userChoice = user.nextInt();
 			break;
 			
