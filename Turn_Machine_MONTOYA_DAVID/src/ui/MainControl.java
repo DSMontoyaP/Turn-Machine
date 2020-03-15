@@ -31,7 +31,7 @@ public class MainControl {
 		switch (userChoice) {
 		case 0:
 			System.out.println(mc1.getSystemTime());
-			System.out.println("\n 1. Add a new user \n 2. Search user \n 3. Assign user a turn \n 4. Upcoming turn to attend \n 5. Attend current turn \n 6. System time \n 7. Set system time \n 8. Create turn type \n 10. Get turns that have been repeated \n 11. Generate random users \n 12. Generate random turns \n 13. Save data \n 14. Close");
+			System.out.println("\n 1. Add a new user \n 2. Search user \n 3. Assign user a turn \n 4. Upcoming turn to attend \n 5. Attend turns \n 6. System time \n 7. Set system time \n 8. Create turn type \n 10. Get turns that have been repeated \n 11. Generate random users \n 12. Generate random turns \n 13. Save data \n 14. Close");
 			userChoice = user.nextInt();
 			break;
 			
@@ -225,8 +225,10 @@ public class MainControl {
 	public String setSystemTime() throws InvalidInputForDateException {
 	
 		String a= "";
+		System.out.println("Do you wish for the date to be set manually? (True/False)");
 		boolean choice = user.nextBoolean();
-		if(choice == false) {
+		user.hasNextLine();
+		if(choice == true) {
 		System.out.println("Please enter the year");
 		int year = user.nextInt();
 		System.out.println("Please enter the month");
@@ -305,7 +307,9 @@ public class MainControl {
 	}
 	
 	public String attend(){
-		return m1.attend();
+		String a = "";
+		a =  m1.attend();
+		return a;
 	}
 	
 	public String createTurnType() throws TurnTypeAlreadyExistsException {

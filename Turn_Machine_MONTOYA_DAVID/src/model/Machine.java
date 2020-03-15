@@ -99,6 +99,7 @@ public class Machine {
 				users.get(i).setSuspended();
 				if(users.get(i).isSuspended() != true) {
 				users.get(i).setTurn(a);
+				advanceTurn();
 				b = "Turn " + a.getName() + " has been assigned";}
 				
 				else if(users.get(i).isSuspended() == true) {
@@ -198,38 +199,39 @@ public class Machine {
 		
 		String a = "";
 		Calendar start = Calendar.getInstance();
-		Calendar end = Calendar.getInstance();
-		end.set(Calendar.YEAR+systemDate.getYear(), (Calendar.MONTH+systemDate.getMonth())+1, Calendar.DATE+systemDate.getDay(), Calendar.HOUR_OF_DAY+systemTime.getHour(), Calendar.MINUTE+systemTime.getMinute(), Calendar.SECOND+systemTime.getSeconds());
-		
+
 		for (int i = 0; i<users.size(); i++) {
+			long difference = time.getTimeInMillis() - start.getTimeInMillis();
 			
-			if(users.get(i).getTurn() != null) {
-				if(users.get(i).getTurn().getType().getDurationMili()+start.getTimeInMillis()<end.getTimeInMillis()) {
-					Random e = new Random();
+			if(users.get(i).getTurn() != null && hourChanged == true && difference > 15000) {
+				System.out.println("Time " + time.getTimeInMillis());
+				System.out.println("Start " + start.getTimeInMillis());	
+				
+				Random e = new Random();
 					int rand = e.nextInt(2)+1;
+					
 					
 					if(rand == 1) {
 					a +=  "Turn " + users.get(i).getTurn().getName() + " was attended";
+					start.setTimeInMillis(users.get(i).getTurn().getType().getDurationMili()+start.getTimeInMillis()+15000);
 					users.get(i).getTurn().setStatus('t');
 					users.get(i).setTurn(null);
 					}
 					
 					else if(rand == 2) {
 					a +=  "Turn " + users.get(i).getTurn().getName() + " was attended";
+					start.setTimeInMillis(users.get(i).getTurn().getType().getDurationMili()+start.getTimeInMillis()+15000);
 					users.get(i).getTurn().setStatus('l');
 					users.get(i).setTurn(null);
 					}
 					
-					start.setTimeInMillis(users.get(i).getTurn().getType().getDurationMili()+start.getTimeInMillis()+15000);
+
 					
 				}
 				
 			}	
-		}
-
 		return a;
-
-	}
+		}
 
 	/**
 	 *<b>Name:</b> advanceTurns.<br>
@@ -372,7 +374,7 @@ public class Machine {
 		Random turnTypeNumber = new Random();
 		
 		for(int i = 0; i < turnAmount; i++) {
-			int a = userNumber.nextInt();
+			int a = userNumber.nextInt(turnAmount);
 			if(users.get(a).getTurn() == null) {
 				assignTurn(users.get(a).getDocument(), turnTypes.get(turnTypeNumber.nextInt(turnTypes.size())));
 			}
